@@ -3,7 +3,7 @@
 
 import { MongoClient } from "mongodb"
 
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/stockzonetracker"
+const uri = process.env.MONGODB_URI || "mongodb+srv://mannusng876:Pinkcity%407557@cluster0.ecp69.mongodb.net/stockzonetracker?retryWrites=true&w=majority"
 let client: MongoClient
 let clientPromise: Promise<MongoClient>
 

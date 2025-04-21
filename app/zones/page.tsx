@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,13 +8,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, ArrowRight, Filter, Search } from "lucide-react"
 import ZoneCard from "@/components/zone-card"
-import { mockZones } from "@/lib/mock-data"
+import { set } from "date-fns"
 
 export default function ZonesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filter, setFilter] = useState("all")
+  const [zones, setZones] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const filteredZones = mockZones.filter((zone) => {
+  useEffect(() => {
+    setLoading(true)
+    fetch("/api/zones")
+    .then((res)=> res.json())
+    .then((data)=>{
+      setZones(data)
+      setLoading(false)
+    })
+  }, [])
+
+  const filteredZones = zones.filter((zone) => {
     const matchesSearch =
       zone.stock.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       zone.stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -27,6 +40,14 @@ export default function ZonesPage() {
 
     return matchesSearch
   })
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-muted-foreground">Loading zones...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12 max-w-7xl mx-auto">
